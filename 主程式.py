@@ -15,7 +15,7 @@ Define the background color (RGB value: (0, 25, 40)).
 
 
 
-# TODO-2: Create the Target class (林柏仲)
+# TODO-2: Create the Target class (邱彥嘉)
 '''
 Define the Target class to represent each target.
 Implement the __init__() method to initialize the target's position, size, and growth state.
@@ -24,12 +24,38 @@ Implement the draw() method to display the target on the screen with multiple co
 Implement the collide() method to check if a click hits the target.
 '''
 
-
+class Target:
+    Max_SIZE = 30
+    GROWTH_RATE = 0.2 # how many pixels it grows per frame
+    COLOR = "red" # the color of the target
+    SECOND_COLOR = "white" # the color of the second circle
+    
+    def __init__(self,x,y): # seff means target it self, and x and y are the position of target
+        self.x = x
+        self.y = y
+        self.size = 0 # radius of target
+        self.grow = True # if it grows or not
+        
+    def update(self):
+        if self.size + self.GROWTH_RATE >= self.MAX_SIZE:
+            self.grow = False # when target reaches the max size, it will stop growing
+        if self.grow:
+            self.size += self.GROWTH_RATE # grow the target
+        else:
+            self.size -= self.GROWTH_RATE # shrink the target
+     
+    def draw(self,win): # to have ring shape
+        pygame.draw.circle(win,self.COLOR, (self.x,self.y),self.size) # draw a larger and larger target(circle)
+        pygame.draw.circle(win,self.SECOND_COLORCOLOR, (self.x,self.y),self.size * 0.8) # draw a smaller and smaller target(circle)
+        pygame.draw.circle(win,self.COLOR, (self.x,self.y),self.size * 0.6) 
+        pygame.draw.circle(win,self.SECOND_COLORCOLOR, (self.x,self.y),self.size * 0.4) 
+        
+        
+#上面             
 # TODO-3: Set up the game drawing function (邱彥嘉)
 '''
 Create the draw() function to fill the background and draw all targets on the screen.
-'''
-
+'''            
 
 
 
@@ -89,6 +115,12 @@ def main():
             if event.type == pygame.QUIT:
                 run = False
                 break
+            
+            
+    pygame.quit()
+
+if __name__ == "__main__":
+    main()
     
     
 
