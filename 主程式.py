@@ -31,7 +31,9 @@ Create the draw() function to fill the background and draw all targets on the sc
 '''
 
 
-# TODO-4: Create the time formatting function
+
+
+# TODO-4: Create the time formatting function (邱彥嘉)
 '''
 Define the format_time() function to format the elapsed time into "MM:SS.m" format.
 Make sure the milliseconds display correctly for accurate time tracking.
@@ -77,6 +79,23 @@ Check for mouse clicks and collisions.
 Update target sizes and remove targets when they shrink completely.
 Draw the updated game state (targets, top bar, etc.) each frame.
 '''
+
+
+def main():
+    run = True
+    
+    while run:
+        for event in pygame.event.get():  # 用來「處理遊戲事件」的程式碼
+            if event.type == pygame.QUIT:
+                run = False
+                break
+    
+    
+
+
+
+
+
 
 
 # TODO-10: Test and debug the game
