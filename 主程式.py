@@ -5,7 +5,7 @@ import pygame
 pygame.init()
 
 
-# TODO-1: Set up the basic game window
+# TODO-1: Set up the basic game window (林柏仲)
 '''
 Create a window of size 800x600 using Pygame.
 Set the game window title to "Aim Trainer".
@@ -15,9 +15,7 @@ Define the background color (RGB value: (0, 25, 40)).
 
 
 
-
-
-# TODO-2: Create the Target class
+# TODO-2: Create the Target class (林柏仲)
 '''
 Define the Target class to represent each target.
 Implement the __init__() method to initialize the target's position, size, and growth state.
@@ -27,7 +25,7 @@ Implement the collide() method to check if a click hits the target.
 '''
 
 
-# TODO-3: Set up the game drawing function
+# TODO-3: Set up the game drawing function (邱彥嘉)
 '''
 Create the draw() function to fill the background and draw all targets on the screen.
 '''
