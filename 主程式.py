@@ -109,6 +109,7 @@ Draw the updated game state (targets, top bar, etc.) each frame.
 
 def main():
     run = True
+    target = [] # 用來儲存「所有目標」的清單,use loop to create a list of targets
     
     while run:
         for event in pygame.event.get():  # 用來「處理遊戲事件」的程式碼
