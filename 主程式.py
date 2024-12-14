@@ -87,7 +87,10 @@ def main():
     run = True
     
     while run:
-        for event in pygame.event.get():
+        for event in pygame.event.get():  # 用來「處理遊戲事件」的程式碼
+            if event.type == pygame.QUIT:
+                run = False
+                break
     
     
 
