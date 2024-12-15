@@ -64,7 +64,9 @@ Create the draw() function to fill the background and draw all targets on the sc
 Define the format_time() function to format the elapsed time into "MM:SS.m" format.
 Make sure the milliseconds display correctly for accurate time tracking.
 '''
+
 start_time = 0
+
 
 
 # TODO-5: Draw the top bar
