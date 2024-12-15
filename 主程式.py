@@ -65,6 +65,9 @@ Define the format_time() function to format the elapsed time into "MM:SS.m" form
 Make sure the milliseconds display correctly for accurate time tracking.
 '''
 
+start_time = 0
+
+
 
 # TODO-5: Draw the top bar
 '''
