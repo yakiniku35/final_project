@@ -12,10 +12,9 @@ Set the game window title to "Aim Trainer".
 Define the background color (RGB value: (0, 25, 40)).
 '''
 WIDTH, HEIGHT = 800, 600
-
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Aim Trainer") #建立視窗及標題
-
+state = 0 #設定遊戲狀態 0=home page 1=normal 2=......
 
 
 # TODO-2: Create the Target class (邱彥嘉)
@@ -79,7 +78,7 @@ Use the pygame.font.SysFont() to display text on the top bar.
 '''
 TOP_BAR_HEIGHT = 50
 def draw_top_bar(win, elapsed_time, targets_pressed, misses): #draw top bar
-    pygame.draw.rect(win,"yellow"(0,0,WIDTH,TOP_BAR_HEIGHT))
+    pygame.draw.rect(win,"yellow",(0,0,WIDTH,TOP_BAR_HEIGHT))
     
 
 # TODO-6: Implement the end screen
@@ -119,13 +118,16 @@ Draw the updated game state (targets, top bar, etc.) each frame.
 def main():
     run = True
     target = [] # 用來儲存「所有目標」的清單,use loop to create a list of targets
+    start_time = time.time()
+    
     
     while run:
         for event in pygame.event.get():  # 用來「處理遊戲事件」的程式碼
             if event.type == pygame.QUIT:
                 run = False
                 break
-            
+            draw_top_bar(WIN,1,1,1)#變數是暫時的，之後要改
+            pygame.display.update()    
             
     pygame.quit()
 
