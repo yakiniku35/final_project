@@ -11,7 +11,10 @@ Create a window of size 800x600 using Pygame.
 Set the game window title to "Aim Trainer".
 Define the background color (RGB value: (0, 25, 40)).
 '''
+WIDTH, HEIGHT = 800, 600
 
+WIN = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Aim Trainer") #建立視窗及標題
 
 
 
@@ -74,7 +77,10 @@ start_time = 0
 Create the draw_top_bar() function to display the top bar showing time, speed, hits, and remaining lives.
 Use the pygame.font.SysFont() to display text on the top bar.
 '''
-
+TOP_BAR_HEIGHT = 50
+def draw_top_bar(win, elapsed_time, targets_pressed, misses): #draw top bar
+    pygame.draw.rect(win,"yellow"(0,0,WIDTH,TOP_BAR_HEIGHT))
+    
 
 # TODO-6: Implement the end screen
 '''
