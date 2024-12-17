@@ -3,6 +3,7 @@ import random
 import time
 import pygame
 pygame.init()
+TIME_LIMIT = 60 # 遊戲時間限制(秒)
 
 
 # TODO-1: Set up the basic game window (林柏仲)
@@ -125,26 +126,65 @@ Draw the updated game state (targets, top bar, etc.) each frame.
 
 def main():
     run = True
-    target = [] # 用來儲存「所有目標」的清單,use loop to create a list of targets
-    
+    targets = []
+    clock = pygame.time.Clock()
+
+    targets_pressed = 0
+    clicks = 0
+    misses = 0
+    start_time = time.time()
+
+    pygame.time.set_timer(TARGET_EVENT, TARGET_INCREMENT)
+
     while run:
-        for event in pygame.event.get():  # 用來「處理遊戲事件」的程式碼
+        clock.tick(60)
+        click = False
+        mouse_pos = pygame.mouse.get_pos()
+        elapsed_time = time.time() - start_time
+
+        # 檢查是否超過時間限制
+        if elapsed_time >= TIME_LIMIT:
+            end_screen(WIN, elapsed_time, targets_pressed, clicks)
+            break
+
+        for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
                 break
-            
-            
+
+            if event.type == TARGET_EVENT:
+                x = random.randint(TARGET_PADDING, WIDTH - TARGET_PADDING)
+                y = random.randint(
+                    TARGET_PADDING + TOP_BAR_HEIGHT, HEIGHT - TARGET_PADDING)
+                target = Target(x, y)
+                targets.append(target)
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                click = True
+                clicks += 1
+
+        for target in targets:
+            target.update()
+
+            if target.size <= 0:
+                targets.remove(target)
+                misses += 1
+
+            if click and target.collide(*mouse_pos):
+                targets.remove(target)
+                targets_pressed += 1
+
+        if misses >= LIVES:
+            end_screen(WIN, elapsed_time, targets_pressed, clicks)
+
+        draw(WIN, targets)
+        draw_top_bar(WIN, elapsed_time, targets_pressed, misses)
+        pygame.display.update()
+
     pygame.quit()
 
 if __name__ == "__main__":
     main()
-    
-    
-
-
-
-
-
 
 
 # TODO-10: Test and debug the game
