@@ -1,0 +1,173 @@
+import math  # 匯入數學模組，用於計算距離等
+import random  # 匯入隨機模組，用於生成隨機位置
+import time  # 匯入時間模組，用於計時
+import pygame  # 匯入 Pygame，用於遊戲開發
+pygame.init()  # 初始化 Pygame
+
+WIDTH, HEIGHT = 800, 600  # 定義視窗寬和高
+
+WIN = pygame.display.set_mode((WIDTH, HEIGHT))  # 創建遊戲視窗
+pygame.display.set_caption("Aim Trainer")  # 設定視窗標題
+
+TARGET_INCREMENT = 400  # 每 400 毫秒生成一個新目標
+TARGET_EVENT = pygame.USEREVENT  # 定義自訂事件，用於生成目標
+
+TARGET_PADDING = 30  # 目標與邊界的最小距離
+
+BG_COLOR = (0, 25, 40)  # 背景顏色
+LIVES = 3  # 玩家生命數
+TOP_BAR_HEIGHT = 50  # 頂部狀態欄高度
+
+LABEL_FONT = pygame.font.SysFont("comicsans", 24)  # 設定字體及大小
+
+
+class Target:
+    MAX_SIZE = 30  # 目標最大尺寸
+    GROWTH_RATE = 0.2  # 目標增長速度
+    COLOR = "red"  # 目標顏色
+    SECOND_COLOR = "white"  # 目標第二層顏色
+
+    def __init__(self, x, y):  # 初始化目標位置
+        self.x = x  # X 座標
+        self.y = y  # Y 座標
+        self.size = 0  # 初始尺寸
+        self.grow = True  # 目標是否在增長
+
+    def update(self):  # 更新目標大小
+        if self.size + self.GROWTH_RATE >= self.MAX_SIZE:  # 如果達到最大尺寸，開始縮小
+            self.grow = False
+
+        if self.grow:  # 如果正在增長，增加尺寸
+            self.size += self.GROWTH_RATE
+        else:  # 如果縮小中，減小尺寸
+            self.size -= self.GROWTH_RATE
+
+    def draw(self, win):  # 繪製目標
+        pygame.draw.circle(win, self.COLOR, (self.x, self.y), self.size)  # 外圈
+        pygame.draw.circle(win, self.SECOND_COLOR, (self.x, self.y), self.size * 0.8)  # 第二圈
+        pygame.draw.circle(win, self.COLOR, (self.x, self.y), self.size * 0.6)  # 第三圈
+        pygame.draw.circle(win, self.SECOND_COLOR, (self.x, self.y), self.size * 0.4)  # 中心圈
+
+    def collide(self, x, y):  # 判斷是否點擊到目標
+        dis = math.sqrt((x - self.x)**2 + (y - self.y)**2)  # 計算滑鼠與目標的距離
+        return dis <= self.size  # 如果距離小於等於尺寸，則碰撞成立
+
+
+def draw(win, targets):  # 繪製畫面
+    win.fill(BG_COLOR)  # 填充背景顏色
+
+    for target in targets:  # 繪製所有目標
+        target.draw(win)
+
+
+def format_time(secs):  # 格式化時間為 MM:SS.M 格式
+    milli = math.floor(int(secs * 1000 % 1000) / 100)  # 毫秒
+    seconds = int(round(secs % 60, 1))  # 秒
+    minutes = int(secs // 60)  # 分鐘
+
+    return f"{minutes:02d}:{seconds:02d}.{milli}"  # 返回格式化時間
+
+
+def draw_top_bar(win, elapsed_time, targets_pressed, misses):  # 繪製頂部狀態欄
+    pygame.draw.rect(win, "grey", (0, 0, WIDTH, TOP_BAR_HEIGHT))  # 繪製灰色背景
+    time_label = LABEL_FONT.render(f"Time: {format_time(elapsed_time)}", 1, "black")  # 時間標籤
+
+    speed = round(targets_pressed / elapsed_time, 1) if elapsed_time > 0 else 0  # 計算速度 (每秒目標數)
+    speed_label = LABEL_FONT.render(f"Speed: {speed} t/s", 1, "black")  # 速度標籤
+
+    hits_label = LABEL_FONT.render(f"Hits: {targets_pressed}", 1, "black")  # 命中標籤
+
+    lives_label = LABEL_FONT.render(f"Lives: {LIVES - misses}", 1, "black")  # 生命數標籤
+
+    win.blit(time_label, (5, 5))  # 繪製時間標籤
+    win.blit(speed_label, (200, 5))  # 繪製速度標籤
+    win.blit(hits_label, (450, 5))  # 繪製命中標籤
+    win.blit(lives_label, (650, 5))  # 繪製生命數標籤
+
+
+def end_screen(win, elapsed_time, targets_pressed, clicks):  # 繪製遊戲結束畫面
+    win.fill(BG_COLOR)  # 填充背景顏色
+    time_label = LABEL_FONT.render(f"Time: {format_time(elapsed_time)}", 1, "white")  # 時間標籤
+
+    speed = round(targets_pressed / elapsed_time, 1) if elapsed_time > 0 else 0  # 計算速度
+    speed_label = LABEL_FONT.render(f"Speed: {speed} t/s", 1, "white")  # 速度標籤
+
+    hits_label = LABEL_FONT.render(f"Hits: {targets_pressed}", 1, "white")  # 命中標籤
+
+    accuracy = round(targets_pressed / clicks * 100, 1) if clicks > 0 else 0  # 計算準確率
+    accuracy_label = LABEL_FONT.render(f"Accuracy: {accuracy}%", 1, "white")  # 準確率標籤
+
+    win.blit(time_label, (get_middle(time_label), 100))  # 繪製時間標籤
+    win.blit(speed_label, (get_middle(speed_label), 200))  # 繪製速度標籤
+    win.blit(hits_label, (get_middle(hits_label), 300))  # 繪製命中標籤
+    win.blit(accuracy_label, (get_middle(accuracy_label), 400))  # 繪製準確率標籤
+
+    pygame.display.update()  # 更新畫面
+
+    run = True
+    while run:  # 等待退出事件
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT or event.type == pygame.KEYDOWN:  # 按下鍵盤或關閉視窗退出
+                quit()
+
+
+def get_middle(surface):  # 計算文字在畫面中間的位置
+    return WIDTH / 2 - surface.get_width()/2
+
+
+def main():  # 遊戲主迴圈
+    run = True
+    targets = []  # 儲存目標
+    clock = pygame.time.Clock()  # 時鐘物件
+
+    targets_pressed = 0  # 命中目標數
+    clicks = 0  # 點擊次數
+    misses = 0  # 未命中次數
+    start_time = time.time()  # 記錄開始時間
+
+    pygame.time.set_timer(TARGET_EVENT, TARGET_INCREMENT)  # 每 400 毫秒生成一個目標
+
+    while run:  # 主遊戲迴圈
+        clock.tick(60)  # 控制更新速率為每秒 60 次
+        click = False  # 是否點擊
+        mouse_pos = pygame.mouse.get_pos()  # 獲取滑鼠位置
+        elapsed_time = time.time() - start_time  # 計算遊戲已運行時間
+
+        for event in pygame.event.get():  # 處理事件
+            if event.type == pygame.QUIT:  # 點擊關閉視窗
+                run = False
+                break
+
+            if event.type == TARGET_EVENT:  # 自訂事件，生成新目標
+                x = random.randint(TARGET_PADDING, WIDTH - TARGET_PADDING)  # 隨機 X 座標
+                y = random.randint(TARGET_PADDING + TOP_BAR_HEIGHT, HEIGHT - TARGET_PADDING)  # 隨機 Y 座標
+                target = Target(x, y)  # 創建目標
+                targets.append(target)  # 加入目標列表
+
+            if event.type == pygame.MOUSEBUTTONDOWN:  # 滑鼠點擊事件
+                click = True
+                clicks += 1  # 點擊次數加一
+
+        for target in targets:  # 更新所有目標
+            target.update()
+
+            if target.size <= 0:  # 如果目標縮小到消失
+                targets.remove(target)  # 移除目標
+                misses += 1  # 未命中數加一
+
+            if click and target.collide(*mouse_pos):  # 如果點擊命中目標
+                targets.remove(target)  # 移除目標
+                targets_pressed += 1  # 命中數加一
+
+        if misses >= LIVES:  # 如果未命中次數超過生命數
+            end_screen(WIN, elapsed_time, targets_pressed, clicks)  # 顯示結束畫面
+
+        draw(WIN, targets)  # 繪製目標
+        draw_top_bar(WIN, elapsed_time, targets_pressed, misses)  # 繪製頂部狀態欄
+        pygame.display.update()  # 更新畫面
+
+    pygame.quit()  # 結束遊戲
+
+
+if __name__ == "__main__":
+    main()  # 啟動遊戲

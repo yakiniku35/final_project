@@ -13,9 +13,13 @@ Set the game window title to "Aim Trainer".
 Define the background color (RGB value: (0, 25, 40)).
 '''
 
-
-
-
+WIDTH, HEIGHT = 800, 600
+WIN = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Aim Trainer") #建立視窗及標題
+TARGET_INCREMENT = 400
+TARGET_EVENT = pygame.USEREVENT
+TIME_LIMIT = 300
+LIVES = 3
 # TODO-2: Create the Target class (邱彥嘉)
 '''
 Define the Target class to represent each target.
@@ -88,7 +92,23 @@ start_time = 0
 Create the draw_top_bar() function to display the top bar showing time, speed, hits, and remaining lives.
 Use the pygame.font.SysFont() to display text on the top bar.
 '''
+TOP_BAR_HEIGHT = 50
+def draw_top_bar(win, elapsed_time, targets_pressed, misses):
+    pygame.draw.rect(win, "grey", (0, 0, WIDTH, TOP_BAR_HEIGHT))
+    time_label = LABEL_FONT.render(
+        f"Time: {format_time(elapsed_time)}", 1, "black")
 
+    speed = round(targets_pressed / elapsed_time, 1)
+    speed_label = LABEL_FONT.render(f"Speed: {speed} t/s", 1, "black")
+
+    hits_label = LABEL_FONT.render(f"Hits: {targets_pressed}", 1, "black")
+
+    lives_label = LABEL_FONT.render(f"Lives: {LIVES - misses}", 1, "black")
+
+    win.blit(time_label, (5, 5))
+    win.blit(speed_label, (200, 5))
+    win.blit(hits_label, (450, 5))
+    win.blit(lives_label, (650, 5))
 
 # TODO-6: Implement the end screen
 '''
@@ -185,7 +205,6 @@ def main():
 
 if __name__ == "__main__":
     main()
-
 
 # TODO-10: Test and debug the game
 '''
