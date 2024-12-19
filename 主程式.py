@@ -3,6 +3,7 @@ import random
 import time
 import pygame
 pygame.init()
+TIME_LIMIT = 60 # 遊戲時間限制(秒)
 
 
 # TODO-1: Set up the basic game window (林柏仲)
@@ -53,6 +54,19 @@ class Target:
         pygame.draw.circle(win,self.SECOND_COLORCOLOR, (self.x,self.y),self.size * 0.8) # draw a smaller and smaller target(circle)
         pygame.draw.circle(win,self.COLOR, (self.x,self.y),self.size * 0.6) 
         pygame.draw.circle(win,self.SECOND_COLORCOLOR, (self.x,self.y),self.size * 0.4) 
+    
+    
+    def collide(self,x,y):
+        dis = math.sqrt((x - self.x)**2 + (y- self.y)**2)
+        return dis <= self.size
+    
+def draw(win,targets):
+    win.fill(BG_COLOR)
+    
+    for target in targets:
+        target.draw(win)
+    
+    
         
         
 #上面             
