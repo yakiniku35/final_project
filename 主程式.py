@@ -20,6 +20,9 @@ TARGET_INCREMENT = 400
 TARGET_EVENT = pygame.USEREVENT
 TIME_LIMIT = 300
 LIVES = 3
+BG_COLOR = ("#000079")
+LABEL_FONT = pygame.font.SysFont("comicsans", 24)
+TARGET_PADDING = 30
 # TODO-2: Create the Target class (邱彥嘉)
 '''
 Define the Target class to represent each target.
@@ -42,7 +45,7 @@ class Target:
         self.grow = True # if it grows or not
         
     def update(self):
-        if self.size + self.GROWTH_RATE >= self.MAX_SIZE:
+        if self.size + self.GROWTH_RATE >= self.Max_SIZE:
             self.grow = False # when target reaches the max size, it will stop growing
         if self.grow:
             self.size += self.GROWTH_RATE # grow the target
@@ -51,9 +54,9 @@ class Target:
      
     def draw(self,win): # to have ring shape
         pygame.draw.circle(win,self.COLOR, (self.x,self.y),self.size) # draw a larger and larger target(circle)
-        pygame.draw.circle(win,self.SECOND_COLORCOLOR, (self.x,self.y),self.size * 0.8) # draw a smaller and smaller target(circle)
+        pygame.draw.circle(win,self.SECOND_COLOR, (self.x,self.y),self.size * 0.8) # draw a smaller and smaller target(circle)
         pygame.draw.circle(win,self.COLOR, (self.x,self.y),self.size * 0.6) 
-        pygame.draw.circle(win,self.SECOND_COLORCOLOR, (self.x,self.y),self.size * 0.4) 
+        pygame.draw.circle(win,self.SECOND_COLOR, (self.x,self.y),self.size * 0.4) 
     
     
     def collide(self,x,y):
@@ -74,7 +77,11 @@ def draw(win,targets):
 '''
 Create the draw() function to fill the background and draw all targets on the screen.
 '''            
+def draw(win, targets):
+    win.fill(BG_COLOR)
 
+    for target in targets:
+        target.draw(win)
 
 
 # TODO-4: Create the time formatting function (邱彥嘉)
@@ -83,7 +90,13 @@ Define the format_time() function to format the elapsed time into "MM:SS.m" form
 Make sure the milliseconds display correctly for accurate time tracking.
 '''
 
-start_time = 0
+def format_time(secs):
+    milli = math.floor(int(secs * 1000 % 1000) / 100)
+    seconds = int(round(secs % 60, 1))
+    minutes = int(secs // 60)
+
+    return f"{minutes:02d}:{seconds:02d}.{milli}"
+
 
 
 
