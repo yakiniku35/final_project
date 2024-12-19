@@ -11,12 +11,14 @@ Create a window of size 800x600 using Pygame.
 Set the game window title to "Aim Trainer".
 Define the background color (RGB value: (0, 25, 40)).
 '''
+
 WIDTH, HEIGHT = 800, 600
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Aim Trainer") #建立視窗及標題
-state = 0 #設定遊戲狀態 0=home page 1=normal 2=......
-
-
+TARGET_INCREMENT = 400
+TARGET_EVENT = pygame.USEREVENT
+TIME_LIMIT = 300
+LIVES = 3
 # TODO-2: Create the Target class (邱彥嘉)
 '''
 Define the Target class to represent each target.
@@ -77,9 +79,22 @@ Create the draw_top_bar() function to display the top bar showing time, speed, h
 Use the pygame.font.SysFont() to display text on the top bar.
 '''
 TOP_BAR_HEIGHT = 50
-def draw_top_bar(win, elapsed_time, targets_pressed, misses): #draw top bar
-    pygame.draw.rect(win,"yellow",(0,0,WIDTH,TOP_BAR_HEIGHT))
-    
+def draw_top_bar(win, elapsed_time, targets_pressed, misses):
+    pygame.draw.rect(win, "grey", (0, 0, WIDTH, TOP_BAR_HEIGHT))
+    time_label = LABEL_FONT.render(
+        f"Time: {format_time(elapsed_time)}", 1, "black")
+
+    speed = round(targets_pressed / elapsed_time, 1)
+    speed_label = LABEL_FONT.render(f"Speed: {speed} t/s", 1, "black")
+
+    hits_label = LABEL_FONT.render(f"Hits: {targets_pressed}", 1, "black")
+
+    lives_label = LABEL_FONT.render(f"Lives: {LIVES - misses}", 1, "black")
+
+    win.blit(time_label, (5, 5))
+    win.blit(speed_label, (200, 5))
+    win.blit(hits_label, (450, 5))
+    win.blit(lives_label, (650, 5))
 
 # TODO-6: Implement the end screen
 '''
@@ -117,30 +132,65 @@ Draw the updated game state (targets, top bar, etc.) each frame.
 
 def main():
     run = True
-    target = [] # 用來儲存「所有目標」的清單,use loop to create a list of targets
+    targets = []
+    clock = pygame.time.Clock()
+
+    targets_pressed = 0
+    clicks = 0
+    misses = 0
     start_time = time.time()
-    
-    
+
+    pygame.time.set_timer(TARGET_EVENT, TARGET_INCREMENT)
+
     while run:
-        for event in pygame.event.get():  # 用來「處理遊戲事件」的程式碼
+        clock.tick(60)
+        click = False
+        mouse_pos = pygame.mouse.get_pos()
+        elapsed_time = time.time() - start_time
+
+        # 檢查是否超過時間限制
+        if elapsed_time >= TIME_LIMIT:
+            end_screen(WIN, elapsed_time, targets_pressed, clicks)
+            break
+
+        for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
                 break
-            draw_top_bar(WIN,1,1,1)#變數是暫時的，之後要改
-            pygame.display.update()    
-            
+
+            if event.type == TARGET_EVENT:
+                x = random.randint(TARGET_PADDING, WIDTH - TARGET_PADDING)
+                y = random.randint(
+                    TARGET_PADDING + TOP_BAR_HEIGHT, HEIGHT - TARGET_PADDING)
+                target = Target(x, y)
+                targets.append(target)
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                click = True
+                clicks += 1
+
+        for target in targets:
+            target.update()
+
+            if target.size <= 0:
+                targets.remove(target)
+                misses += 1
+
+            if click and target.collide(*mouse_pos):
+                targets.remove(target)
+                targets_pressed += 1
+
+        if misses >= LIVES:
+            end_screen(WIN, elapsed_time, targets_pressed, clicks)
+
+        draw(WIN, targets)
+        draw_top_bar(WIN, elapsed_time, targets_pressed, misses)
+        pygame.display.update()
+
     pygame.quit()
 
 if __name__ == "__main__":
     main()
-    
-    
-
-
-
-
-
-
 
 # TODO-10: Test and debug the game
 '''
