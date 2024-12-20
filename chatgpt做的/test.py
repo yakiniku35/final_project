@@ -24,7 +24,7 @@ TOP_BAR_HEIGHT = 50  # 顶部信息栏的高度
 LABEL_FONT = pygame.font.SysFont("comicsans", 24)  # 字体
 
 # 加载点击音效
-CLICK_SOUND = pygame.mixer.Sound("click.mp3")
+CLICK_SOUND = pygame.mixer.Sound("chatgpt做的/click.mp3")
 
 # 定义目标类
 class Target:
@@ -236,7 +236,7 @@ def main():
 
         if misses >= LIVES:  # 如果生命值为0，结束游戏
             end_screen(WIN, elapsed_time, targets_pressed, clicks)
-
+            
         draw(WIN, targets)  # 绘制目标
         draw_top_bar(WIN, elapsed_time, targets_pressed, misses)  # 绘制顶部信息栏
         pygame.display.update()  # 更新显示
