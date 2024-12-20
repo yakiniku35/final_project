@@ -69,6 +69,7 @@ def draw(win, targets):
         if not target.draw(win):  # 如果目標已被擊中，刪除該目標
             targets.remove(target)
 
+
 def format_time(secs):
     milli = math.floor(int(secs * 1000 % 1000) / 100)  # 獲取毫秒部分
     seconds = int(round(secs % 60, 1))  # 獲取秒部分
@@ -164,7 +165,7 @@ def get_middle(surface):
 
 def main():
     pygame.mixer.music.load(music) 
-    pygame.mixer.music.play(1,0.0)
+    pygame.mixer.music.play(1, 0.0)  # 播放音樂
     mode = start_screen(WIN)  # 顯示開始畫面並獲取選擇的模式
     global TARGET_INCREMENT, LIVES
     TARGET_INCREMENT = 400 if mode in ["easy", "hard"] else 1000  # 設置目標生成時間間隔
