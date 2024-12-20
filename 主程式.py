@@ -240,7 +240,7 @@ def main():
         pygame.display.update()  # 更新顯示
 
     draw_end_screen(WIN, elapsed_time, targets_pressed, clicks, misses, mode)  # 顯示結束畫面
-    pygame.quit()  # 退出遊戲
+    pygame.quit()  # 退遊
 
 if __name__ == "__main__":
     main()  # 運行主函數
