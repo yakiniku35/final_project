@@ -4,8 +4,6 @@ import time
 import pygame
 
 pygame.init()
-pygame.mixer.init()
-music = "Nyan Cat! [Official].mp3"
 
 # 設置基本的遊戲視窗
 WIDTH, HEIGHT = 800, 600
@@ -19,8 +17,6 @@ LIVES = 3  # 初始生命值
 TOP_BAR_HEIGHT = 50  # 訊息欄的高度
 LABEL_FONT = pygame.font.SysFont("comicsans", 24)  # 字體
 CLICK_SOUND = pygame.mixer.Sound("chatgpt做的/click.mp3")  # 音效
-screen = pygame.display.set_mode((400, 300))
-pygame.display.set_caption("Volume Controller")
 
 class Target:
     MAX_SIZE = 30  # 最大大小
@@ -68,7 +64,6 @@ def draw(win, targets):
     for target in targets[:]:
         if not target.draw(win):  # 如果目標已被擊中，刪除該目標
             targets.remove(target)
-
 
 def format_time(secs):
     milli = math.floor(int(secs * 1000 % 1000) / 100)  # 獲取毫秒部分
@@ -164,8 +159,6 @@ def get_middle(surface):
     return WIDTH / 2 - surface.get_width()/2
 
 def main():
-    pygame.mixer.music.load(music) 
-    pygame.mixer.music.play(1, 0.0)  # 播放音樂
     mode = start_screen(WIN)  # 顯示開始畫面並獲取選擇的模式
     global TARGET_INCREMENT, LIVES
     TARGET_INCREMENT = 400 if mode in ["easy", "hard"] else 1000  # 設置目標生成時間間隔
