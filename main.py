@@ -18,6 +18,9 @@ TOP_BAR_HEIGHT = 50  # 訊息欄的高度
 LABEL_FONT = pygame.font.SysFont("comicsans", 24)  # 字體
 CLICK_SOUND = pygame.mixer.Sound("chatgpt做的/click.mp3")  # 音效
 
+# 在全局範圍內添加音量變數
+# VOLUME = 1.0  # 音量範圍從 0.0 到 1.0
+
 class Target:
     MAX_SIZE = 30  # 最大大小
     GROWTH_RATE = 0.2  # 生長速度
@@ -85,12 +88,17 @@ def draw_top_bar(win, elapsed_time, targets_pressed, misses):
     win.blit(lives_label, (650, 5))  # 繪製剩餘生命
 
 def start_screen(win):
+    global VOLUME
     win.fill(BG_COLOR)  # 填充背景顏色
     title_label = LABEL_FONT.render("Aim Trainer", 1, "white")  # 渲染標題
     start_label = LABEL_FONT.render("Choose a Mode to Start", 1, "white")  # 渲染提示信息
     easy_label = LABEL_FONT.render("Easy Mode", 1, "white")  # 渲染簡單模式
     hard_label = LABEL_FONT.render("Hard Mode", 1, "white")  # 渲染困難模式
     timer_label = LABEL_FONT.render("1 Minute Timer Mode", 1, "white")  # 渲染倒數計時模式
+
+    # 音量調整
+    # volume_label = LABEL_FONT.render(f"Volume: {int(VOLUME * 100)}%", 1, "white")  # 渲染音量
+    # volume_rect = pygame.Rect(WIDTH / 2 - volume_label.get_width() / 2, 450, volume_label.get_width(), volume_label.get_height())
 
     # 設置按鈕區域
     easy_rect = pygame.Rect(WIDTH / 2 - easy_label.get_width() / 2, 300, easy_label.get_width(), easy_label.get_height())
@@ -100,12 +108,14 @@ def start_screen(win):
     pygame.draw.rect(win, "green", easy_rect)  # 繪製綠色背景
     pygame.draw.rect(win, "green", hard_rect)  # 繪製綠色背景
     pygame.draw.rect(win, "green", timer_rect)  # 繪製綠色背景
+    # pygame.draw.rect(win, "green", volume_rect)  # 繪製音量背景
 
     win.blit(title_label, (WIDTH / 2 - title_label.get_width() / 2, 150))  # 繪製標題
     win.blit(start_label, (WIDTH / 2 - start_label.get_width() / 2, 220))  # 繪製提示信息
     win.blit(easy_label, easy_rect.topleft)  # 繪製簡單模式按鈕
     win.blit(hard_label, hard_rect.topleft)  # 繪製困難模式按鈕
     win.blit(timer_label, timer_rect.topleft)  # 繪製倒數計時模式按鈕
+    # win.blit(volume_label, volume_rect.topleft)  # 繪製音量顯示
     pygame.display.update()  # 更新顯示
 
     mode = None  # 儲存所選模式
@@ -122,6 +132,14 @@ def start_screen(win):
                     mode = "hard"
                 elif timer_rect.collidepoint(mouse_pos):  # 點擊倒數計時模式按鈕
                     mode = "timer"
+        #         elif volume_rect.collidepoint(mouse_pos):  # 點擊音量調整按鈕
+        #             VOLUME = (VOLUME + 0.1) % 1.1  # 增加音量，並保持在 0.0 到 1.0 之間
+        #             pygame.mixer.music.set_volume(VOLUME)  # 設置音量
+
+        # volume_label = LABEL_FONT.render(f"Volume: {int(VOLUME * 100)}%", 1, "white")  # 更新音量顯示
+        # win.blit(volume_label, volume_rect.topleft)  # 繪製更新後的音量顯示
+        # pygame.display.update()  # 更新顯示
+
     return mode
 
 def draw_end_screen(win, elapsed_time, targets_pressed, clicks, misses, mode):
