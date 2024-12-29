@@ -144,7 +144,7 @@ def start_screen(win):
 
 def draw_end_screen(win, elapsed_time, targets_pressed, clicks, misses, mode):
     win.fill(BG_COLOR)  # 填充背景顏色
-    time_label = LABEL_FONT.render(f"Time: {format_time(elapsed_time)}", 1, "white")  # 渲染時間
+    time_label = LABEL_FONT.render(f"Time: {format_time(elapsed_time)}", 1, "black")  # 渲染時間
     speed = round(targets_pressed / elapsed_time, 1) if elapsed_time > 0 else 0  # 計算射擊速度
     speed_label = LABEL_FONT.render(f"Speed: {speed} t/s", 1, "black")  # 渲染速度
     hits_label = LABEL_FONT.render(f"Hits: {targets_pressed}", 1, "black")  # 渲染命中次數
@@ -159,11 +159,10 @@ def draw_end_screen(win, elapsed_time, targets_pressed, clicks, misses, mode):
     # 繪製重新開始按鈕
     restart_button = {"rect": pygame.Rect(WIDTH / 2 - 100, 500, 200, 50), "label": LABEL_FONT.render("Restart", 1, "white")}
     pygame.draw.rect(win, "green", restart_button["rect"])  # 繪製綠色背景
-    win.blit(restart_button["label"], restart_button["rect"].topleft)
+    win.blit(restart_button["label"], (restart_button["rect"].x + 50, restart_button["rect"].y + 10))  # 校正文字位置
     pygame.display.update()
 
-    waiting = True
-    while waiting:
+    while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -171,7 +170,7 @@ def draw_end_screen(win, elapsed_time, targets_pressed, clicks, misses, mode):
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
                 if restart_button["rect"].collidepoint(mouse_pos):
-                    waiting = False
+                    main()  # 再次調用主函數開始新一局遊戲
 
 def get_middle(surface):
     return WIDTH / 2 - surface.get_width()/2
