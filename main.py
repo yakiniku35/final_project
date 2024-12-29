@@ -82,8 +82,9 @@ def draw_top_bar(win, elapsed_time, targets_pressed, misses, mode):
     hits_label = LABEL_FONT.render(f"Hits: {targets_pressed}", 1, "black")  # 渲染命中次數
     lives_label = LABEL_FONT.render(f"Lives: {max(LIVES - misses, 0)}", 1, "black")  # 渲染剩餘生命
 
-    if mode == "timer":  # 如果是倒數模式，僅顯示剩餘時間
+    if mode == "timer":  
         win.blit(time_label, (5, 5)) 
+        win.blit(hits_label, (450, 5))  # 繪製命中次數
     else:
         win.blit(time_label, (5, 5))  # 繪製時間
         win.blit(speed_label, (200, 5))  # 繪製速度
