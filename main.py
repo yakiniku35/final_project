@@ -74,7 +74,7 @@ def format_time(secs):
     minutes = int(secs // 60)  # 獲取分鐘部分
     return f"{minutes:02d}:{seconds:02d}.{milli}"
 
-def draw_top_bar(win, elapsed_time, targets_pressed, misses):
+def draw_top_bar(win, elapsed_time, targets_pressed, misses, mode):
     pygame.draw.rect(win, "grey", (0, 0, WIDTH, TOP_BAR_HEIGHT))  # 繪製頂部訊息欄背景
     time_label = LABEL_FONT.render(f"Time: {format_time(elapsed_time)}", 1, "black")  # 渲染時間
     speed = round(targets_pressed / elapsed_time, 1) if elapsed_time > 0 else 0  # 計算射擊速度
@@ -82,10 +82,13 @@ def draw_top_bar(win, elapsed_time, targets_pressed, misses):
     hits_label = LABEL_FONT.render(f"Hits: {targets_pressed}", 1, "black")  # 渲染命中次數
     lives_label = LABEL_FONT.render(f"Lives: {max(LIVES - misses, 0)}", 1, "black")  # 渲染剩餘生命
 
-    win.blit(time_label, (5, 5))  # 繪製時間
-    win.blit(speed_label, (200, 5))  # 繪製速度
-    win.blit(hits_label, (450, 5))  # 繪製命中次數
-    win.blit(lives_label, (650, 5))  # 繪製剩餘生命
+    if mode == "timer":  # 如果是倒數模式，僅顯示剩餘時間
+        win.blit(time_label, (5, 5)) 
+    else:
+        win.blit(time_label, (5, 5))  # 繪製時間
+        win.blit(speed_label, (200, 5))  # 繪製速度
+        win.blit(hits_label, (450, 5))  # 繪製命中次數
+        win.blit(lives_label, (650, 5))  # 繪製剩餘生命
 
 def start_screen(win):
     global VOLUME
@@ -190,10 +193,12 @@ def main():
     misses = 0  # 記錄漏掉的目標次數
     start_time = time.time()  # 記錄遊戲開始時間
 
-    if mode == "timer":
-        countdown_time = 60  # 倒數計時 60 秒
-        start_time = time.time()  # 重設開始時間
-    else:
+    countdown_time = 60  # 倒數計時模式的總時間
+    remaining_time = countdown_time  # 初始化剩餘時間
+
+    last_target_time = time.time()  # 初始化最後一次生成目標的時間
+
+    if mode != "timer":
         pygame.time.set_timer(TARGET_EVENT, TARGET_INCREMENT)  # 設置目標生成定時器
 
     while run:
@@ -203,17 +208,26 @@ def main():
         elapsed_time = time.time() - start_time  # 計算已用時間
 
         if mode == "timer":
-            remaining_time = countdown_time - elapsed_time
+            remaining_time = countdown_time - elapsed_time  # 倒數計算剩餘時間
             if remaining_time <= 0:  # 倒數計時結束
                 run = False
-            elapsed_time = countdown_time  # 將已用時間設置為 60 秒
+                remaining_time = 0  # 確保不顯示負數時間
+
+            # 手動生成目標
+            if time.time() - last_target_time >= TARGET_INCREMENT / 1000:  # 將間隔從毫秒轉換為秒
+                x = random.randint(TARGET_PADDING, WIDTH - TARGET_PADDING)
+                y = random.randint(TARGET_PADDING + TOP_BAR_HEIGHT, HEIGHT - TARGET_PADDING)
+                ttype = "normal"  # 倒數模式只生成普通目標
+                target = Target(x, y, ttype)
+                targets.append(target)
+                last_target_time = time.time()  # 更新最後生成目標的時間
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
                 break
 
-            if event.type == TARGET_EVENT and mode != "timer":  # 生成新目標
+            if event.type == TARGET_EVENT and mode != "timer":  # 生成新目標（非倒數模式）
                 x = random.randint(TARGET_PADDING, WIDTH - TARGET_PADDING)
                 y = random.randint(TARGET_PADDING + TOP_BAR_HEIGHT, HEIGHT - TARGET_PADDING)
                 ttype = random.choices(["normal", "heal", "harm"], [0.8, 0.1, 0.1])[0]
@@ -242,15 +256,20 @@ def main():
                     misses += 1
                 targets_pressed += 1  # 增加命中目標數
 
-        if misses >= LIVES:  # 如果生命值為0，結束遊戲
+        if misses >= LIVES and mode != "timer":  # 如果生命值為0，結束遊戲（非倒數模式）
             run = False
 
         draw(WIN, targets)  # 繪製目標
-        draw_top_bar(WIN, elapsed_time, targets_pressed, misses)  # 繪製頂部信息欄
+
+        # 倒數模式顯示剩餘時間，其他模式顯示經過時間
+        time_to_display = remaining_time if mode == "timer" else elapsed_time
+        draw_top_bar(WIN, time_to_display, targets_pressed, misses, mode)
+  # 繪製頂部信息欄
         pygame.display.update()  # 更新顯示
 
-    draw_end_screen(WIN, elapsed_time, targets_pressed, clicks, misses, mode)  # 顯示結束畫面
+    draw_end_screen(WIN, countdown_time - remaining_time if mode == "timer" else elapsed_time,
+                    targets_pressed, clicks, misses, mode)  # 顯示結束畫面
     pygame.quit()  # 退遊
-
+    
 if __name__ == "__main__":
     main()  # 運行主函數
