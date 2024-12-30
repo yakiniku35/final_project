@@ -12,12 +12,12 @@ pygame.display.set_caption("Aim Trainer")
 TARGET_INCREMENT = 400  # 目標生成的時間間隔
 TARGET_EVENT = pygame.USEREVENT  # 自定義事件
 TARGET_PADDING = 30  # 目標生成的輪廓
-BG_COLOR = (255, 255, 255)  # 背景顏色改為白色
+BG_COLOR = (18, 34, 89)  # 背景顏色改為白色
 LIVES = 3  # 初始生命值
 TOP_BAR_HEIGHT = 50  # 訊息欄的高度
 LABEL_FONT = pygame.font.SysFont("comicsans", 24)  # 字體
 CLICK_SOUND = pygame.mixer.Sound("chatgpt做的/click.mp3")  # 音效
-
+GREEN = (33, 86, 50)
 # 在全局範圍內添加音量變數
 # VOLUME = 1.0  # 音量範圍從 0.0 到 1.0
 
@@ -109,9 +109,9 @@ def start_screen(win):
     hard_rect = pygame.Rect(WIDTH / 2 - hard_label.get_width() / 2, 350, hard_label.get_width(), hard_label.get_height())
     timer_rect = pygame.Rect(WIDTH / 2 - timer_label.get_width() / 2, 400, timer_label.get_width(), timer_label.get_height())
 
-    pygame.draw.rect(win, "green", easy_rect)  # 繪製綠色背景
-    pygame.draw.rect(win, "green", hard_rect)  # 繪製綠色背景
-    pygame.draw.rect(win, "green", timer_rect)  # 繪製綠色背景
+    pygame.draw.rect(win,GREEN, easy_rect)  # 繪製綠色背景
+    pygame.draw.rect(win,GREEN, hard_rect)  # 繪製綠色背景
+    pygame.draw.rect(win,GREEN, timer_rect)  # 繪製綠色背景
     # pygame.draw.rect(win, "green", volume_rect)  # 繪製音量背景
 
     win.blit(title_label, (WIDTH / 2 - title_label.get_width() / 2, 150))  # 繪製標題
@@ -148,12 +148,12 @@ def start_screen(win):
 
 def draw_end_screen(win, elapsed_time, targets_pressed, clicks, misses, mode):
     win.fill(BG_COLOR)  # 填充背景顏色
-    time_label = LABEL_FONT.render(f"Time: {format_time(elapsed_time)}", 1, "black")  # 渲染時間
+    time_label = LABEL_FONT.render(f"Time: {format_time(elapsed_time)}", 1, "white")  # 渲染時間
     speed = round(targets_pressed / elapsed_time, 1) if elapsed_time > 0 else 0  # 計算射擊速度
-    speed_label = LABEL_FONT.render(f"Speed: {speed} t/s", 1, "black")  # 渲染速度
-    hits_label = LABEL_FONT.render(f"Hits: {targets_pressed}", 1, "black")  # 渲染命中次數
+    speed_label = LABEL_FONT.render(f"Speed: {speed} t/s", 1, "white")  # 渲染速度
+    hits_label = LABEL_FONT.render(f"Hits: {targets_pressed}", 1, "white")  # 渲染命中次數
     accuracy = round(targets_pressed / clicks * 100, 1) if clicks > 0 else 0  # 計算準確度
-    accuracy_label = LABEL_FONT.render(f"Accuracy: {accuracy}%", 1, "black")  # 渲染準確度
+    accuracy_label = LABEL_FONT.render(f"Accuracy: {accuracy}%", 1, "white")  # 渲染準確度
 
     win.blit(time_label, (get_middle(time_label), 100))  # 繪製時間
     win.blit(speed_label, (get_middle(speed_label), 200))  # 繪製速度
@@ -162,7 +162,7 @@ def draw_end_screen(win, elapsed_time, targets_pressed, clicks, misses, mode):
 
     # 繪製重新開始按鈕
     restart_button = {"rect": pygame.Rect(WIDTH / 2 - 100, 500, 200, 50), "label": LABEL_FONT.render("Restart", 1, "white")}
-    pygame.draw.rect(win, "green", restart_button["rect"])  # 繪製綠色背景
+    pygame.draw.rect(win,GREEN, restart_button["rect"])  # 繪製綠色背景
     win.blit(restart_button["label"], (restart_button["rect"].x + 50, restart_button["rect"].y + 10))  # 校正文字位置
     pygame.display.update()
 
