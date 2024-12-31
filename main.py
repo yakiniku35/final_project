@@ -18,8 +18,6 @@ TOP_BAR_HEIGHT = 50  # 訊息欄的高度
 LABEL_FONT = pygame.font.SysFont("comicsans", 24) 
 CLICK_SOUND = pygame.mixer.Sound("click.mp3")  
 GREEN = (33, 86, 50) # 按鈕顏色改為綠色
-# 在全局範圍內添加音量變數
-# VOLUME = 1.0  # 音量範圍從 0.0 到 1.0
 
 class Target:
     MAX_SIZE = 30  # 最大大小
