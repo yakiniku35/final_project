@@ -12,12 +12,12 @@ pygame.display.set_caption("Aim Trainer")
 TARGET_INCREMENT = 400  # 目標生成的時間間隔
 TARGET_EVENT = pygame.USEREVENT  # 自定義事件
 TARGET_PADDING = 30  # 目標生成的輪廓
-BG_COLOR = (18, 34, 89)  # 背景顏色改為白色
+BG_COLOR = (18, 34, 89)  # 背景顏色改為藍色
 LIVES = 3  # 初始生命值
 TOP_BAR_HEIGHT = 50  # 訊息欄的高度
 LABEL_FONT = pygame.font.SysFont("comicsans", 24)  # 字體
 CLICK_SOUND = pygame.mixer.Sound("chatgpt做的/click.mp3")  # 音效
-GREEN = (33, 86, 50)
+GREEN = (33, 86, 50)# 按鈕顏色改為綠色
 # 在全局範圍內添加音量變數
 # VOLUME = 1.0  # 音量範圍從 0.0 到 1.0
 
