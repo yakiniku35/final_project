@@ -180,7 +180,7 @@ def get_middle(surface):
 def main():
     mode = start_screen(WIN)  # 顯示開始畫面並獲取選擇的模式
     global TARGET_INCREMENT, LIVES
-    TARGET_INCREMENT = 500 if mode == "easy" and mode == "timer" else 100  # Easy Mode 設置為 1000 毫秒，其他模式
+    TARGET_INCREMENT = 500 if mode == "easy" or mode == "timer" else 100  # Easy Mode 設置為 1000 毫秒，其他模式
     LIVES = 5 if mode == "easy" else 3  # 設置初始生命值
 
     run = True
