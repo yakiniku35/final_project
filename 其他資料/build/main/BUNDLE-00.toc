@@ -1,0 +1,1 @@
+([('main', '/Users/peterchiu/Desktop/期末專題/dist/main', 'EXECUTABLE')],)
